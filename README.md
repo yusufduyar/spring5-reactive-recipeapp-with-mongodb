@@ -1,1 +1,3 @@
 # Reactive Recipe Web App Using MongoDB
+[![CircleCI](https://circleci.com/gh/yusufduyar/spring5-reactive-recipeapp-with-mongodb.svg?style=svg)](https://circleci.com/gh/yusufduyar/spring5-reactive-recipeapp-with-mongodb)
+[![codecov](https://codecov.io/gh/yusufduyar/spring5-reactive-recipeapp-with-mongodb/branch/master/graph/badge.svg)](https://codecov.io/gh/yusufduyar/spring5-reactive-recipeapp-with-mongodb)
