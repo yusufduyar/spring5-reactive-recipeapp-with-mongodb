@@ -1,7 +1,8 @@
 package com.spring5.recipeapp.reactive.services;
 
 import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Mono;
 
 public interface IImageService {
-    void saveImageFile(String recipeId, MultipartFile multipartFile);
+    Mono<Void> saveImageFile(String recipeId, MultipartFile multipartFile);
 }

@@ -1,11 +1,11 @@
 package com.spring5.recipeapp.reactive.services;
 
 import com.spring5.recipeapp.reactive.domain.Recipe;
-import com.spring5.recipeapp.reactive.repositories.IRecipeRepository;
+import com.spring5.recipeapp.reactive.repositories.reactive.IRecipeReactiveRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 
@@ -13,31 +13,61 @@ import java.io.IOException;
 @Service
 public class ImageService implements IImageService {
 
-    private final IRecipeRepository recipeRepository;
+    private final IRecipeReactiveRepository recipeReactiveRepository;
 
-    public ImageService(IRecipeRepository recipeRepository) {
-        this.recipeRepository = recipeRepository;
+    public ImageService(IRecipeReactiveRepository IRecipeReactiveRepository) {
+        this.recipeReactiveRepository = IRecipeReactiveRepository;
     }
 
     @Override
-    @Transactional
-    public void saveImageFile(String recipeId, MultipartFile multipartFile) {
-        try {
-            Recipe recipe = recipeRepository.findById(recipeId).get();
+    public Mono<Void> saveImageFile(String recipeId, MultipartFile multipartFile) {
+        Mono<Recipe> recipeMono = recipeReactiveRepository.findById(recipeId)
+                .map(recipe -> {
+                    Byte[] byteObjects = new Byte[0];
+                    try {
+                        byteObjects = new Byte[multipartFile.getBytes().length];
 
-            Byte[] bytesOfImage = new Byte[multipartFile.getBytes().length];
-            int i =0;
-            for(byte b: multipartFile.getBytes()){
-                bytesOfImage[i++] = b;
-            }
-            recipe.setImage(bytesOfImage);
+                        int i = 0;
 
-            recipeRepository.save(recipe);
-        } catch (IOException e) {
-            log.error("Error when saving file", e);
-            e.printStackTrace();
-        }
+                        for (byte b : multipartFile.getBytes()) {
+                            byteObjects[i++] = b;
+                        }
+
+                        recipe.setImage(byteObjects);
+
+                        return recipe;
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        throw new RuntimeException(e);
+                    }
+                });
+
+        recipeReactiveRepository.save(recipeMono.block()).block();
+
+        return Mono.empty();
+
+//        recipeReactiveRepository.findById(recipeId)
+//                .map(recipe -> {
+//                    Byte[] bytesOfImage = new Byte[0];
+//                    try {
+//                        bytesOfImage = new Byte[multipartFile.getBytes().length];
+//
+//                        int i =0;
+//
+//                        for(byte b: multipartFile.getBytes()){
+//                            bytesOfImage[i++] = b;
+//                        }
+//
+//                        recipe.setImage(bytesOfImage);
+//
+//                        return recipe;
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                        throw new RuntimeException(e);
+//                    }
+//                }).publish(recipeMono-> recipeReactiveRepository.save(recipeMono.block()));
+//
+//        return Mono.empty();
     }
-
-
 }
