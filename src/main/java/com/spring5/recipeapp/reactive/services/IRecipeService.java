@@ -2,16 +2,18 @@ package com.spring5.recipeapp.reactive.services;
 
 import com.spring5.recipeapp.reactive.commands.RecipeCommand;
 import com.spring5.recipeapp.reactive.domain.Recipe;
-
-import java.util.Set;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface IRecipeService {
 
-    Set<Recipe> getRecipes();
-    Recipe findById(String id);
-    RecipeCommand saveRecipeCommand(RecipeCommand recipeCommand);
+    Flux<Recipe> getRecipes();
 
-    RecipeCommand findCommandById(String id);
+    Mono<Recipe> findById(String id);
 
-    void deleteById(String id);
+    Mono<RecipeCommand> saveRecipeCommand(RecipeCommand recipeCommand);
+
+    Mono<RecipeCommand> findCommandById(String id);
+
+    Mono<Void> deleteById(String id);
 }

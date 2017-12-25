@@ -38,7 +38,7 @@ public class IRecipeServiceIT {
 
         //when
         recipeCommand.setDescription("newDescription");
-        RecipeCommand savedRecipeCommand = recipeService.saveRecipeCommand(recipeCommand);
+        RecipeCommand savedRecipeCommand = recipeService.saveRecipeCommand(recipeCommand).block();
 
         //then
         assertNotNull(savedRecipeCommand);
