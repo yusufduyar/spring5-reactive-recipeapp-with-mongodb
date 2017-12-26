@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 
 @Slf4j
 @Controller
@@ -49,7 +50,6 @@ public class IngredientController {
     @GetMapping("/recipe/{recipeId}/ingredient/{ingredientId}/update")
     public String showRecipeIngredientToUpdate(@PathVariable String recipeId, @PathVariable String ingredientId, Model model) {
         model.addAttribute("ingredient", ingredientService.findByRecipeIdAndIngredientId(recipeId, ingredientId).block());
-        model.addAttribute("uomList",unitOfMeasureService.listAllUnitOfMeasures());
 
         return "recipe/ingredient/ingredientform";
     }
@@ -61,7 +61,6 @@ public class IngredientController {
 
         if(bindingResult.hasErrors()){
             bindingResult.getAllErrors().forEach(objectError -> log.debug(objectError.toString()));
-            model.addAttribute("uomList",unitOfMeasureService.listAllUnitOfMeasures());
             return "recipe/ingredient/ingredientform";
         }
 
@@ -80,8 +79,6 @@ public class IngredientController {
 
         ingredientCommand.setUnitOfMeasure(new UnitOfMeasureCommand());
 
-        model.addAttribute("uomList",unitOfMeasureService.listAllUnitOfMeasures());
-
         return "recipe/ingredient/ingredientform";
     }
 
@@ -90,5 +87,10 @@ public class IngredientController {
         ingredientService.deleteById(recipeId, ingredientId).block();
 
         return "redirect:/recipe/"+recipeId+"/ingredients";
+    }
+
+    @ModelAttribute("uomList")
+    public Flux<UnitOfMeasureCommand> fillUnitOfMeasureList(){
+        return unitOfMeasureService.listAllUnitOfMeasures();
     }
 }
