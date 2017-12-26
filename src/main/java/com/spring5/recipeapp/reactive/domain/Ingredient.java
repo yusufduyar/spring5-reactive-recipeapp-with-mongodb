@@ -13,11 +13,9 @@ public class Ingredient {
     private String id= UUID.randomUUID().toString();
     private String description;
     private BigDecimal amount;
-
     private UnitOfMeasure unitOfMeasure;
 
-    public Ingredient() {
-    }
+    public Ingredient() { }
 
     public Ingredient(String description, BigDecimal amount, UnitOfMeasure uom) {
         this.description = description;
